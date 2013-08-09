@@ -1,0 +1,3 @@
+http://r.qzone.qq.com/fcg-bin/cgi_get_score.fcg
+	?uins=61954826%2C453134722%2C544065840%2C2424269376%2C418005608%2C544065840&mask=7&g_tk=1094885191
+此cgi不需要QQ登录态

@@ -1,0 +1,8 @@
+	QZFL.pluginsDefine.getACSRFToken = function() {
+		return arguments.callee._DJB(QZFL.cookie.get("skey"))
+	};
+	QZFL.pluginsDefine.getACSRFToken._DJB = function(str) {
+		var hash = 5381;
+		for (var i = 0, len = str.length; i < len; ++i) hash += (hash << 5) + str.charCodeAt(i);
+		return hash & 2147483647
+	};

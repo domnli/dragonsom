@@ -1,0 +1,43 @@
+<include file="Public:header" />
+<!--<script type="text/javascript" src="https://raw.github.com/sbiermanlytle/iioengine/master/core/iioEngine.js"></script>-->
+<script type="text/javascript" src="http://ftp_dml.hzsx15.badudns.cc/Public/js/iioEngine.min.js"></script>
+<!--<script type="text/javascript" src="http://iioengine.com/js/iioDebugger.js"></script>-->
+<style type="text/css">
+body{text-align: center}
+</style>
+<div class="row" style="margin:5px auto">
+    <button class="btn btn-small" onclick="start()">重新开始</button>
+    <a class="btn btn-small" href="__APP__/Tuixiangzi/edit">设计关卡</a>
+    <a class="" href="__APP__/Tuixiangzi/index">原始关卡</a>
+</div>
+<div class="row"><h4>玩家宣言：<span id="playtitle">{:$data['title']}</span></h4></div>
+<div id="gamepanl"></div>
+<script src="__TMPL__Public/js/tuixiangzi.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    //var leveldata=eval('('+'{:$data["leveldata"]}'+')');
+    var leveldata=JSON.parse('{:$data["leveldata"]}');
+    var test;
+    function start(){
+        $('#gamepanl').html('');
+        iio.apps=[];
+        iio.start(tuixiangzi.init,'gamepanl',leveldata.column*50,leveldata.row*50);    
+    } 
+    tuixiangzi.success=function(){
+        $.ajax({type:'post',url:'__APP__/Tuixiangzi/passcuslevel',success:function(r){
+            if('0' == r){
+                alert('这是最后一关，恭喜');
+            }else{
+                console.log(r);
+                var ra=r.split('&&&');
+                $('#playtitle').text(ra[0]);
+                console.log(ra);
+                test=ra[1];
+                leveldata=JSON.parse(ra[1].replace(/\\/g,''));
+                start();
+            }
+        }});
+    }
+    start();
+</script>
+
+<include file="Public:footer" />

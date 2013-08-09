@@ -1,0 +1,110 @@
+<include file="Public:header" />
+<style type="text/css">
+  	a{outline:none}
+  	#image-show{position:relative;margin-top:20px;width:750px;margin:0 auto;text-align:center}
+  	#image-show .prev {display: block;width: 50%;height: 100%;position: absolute;top: 0;left: 0;z-index: 100;}
+	#image-show .next {display: block;width: 50%;height: 100%;position: absolute;top: 0;right: 0;z-index: 100;}
+  	#image-show .prev:hover {cursor: url(__PUBLIC__/images/arrow-prev.gif),auto;zoom:1;}
+	#image-show .next:hover {cursor: url(__PUBLIC__/images/arrow-next.gif),auto;zoom:1;}
+   .imgtitle{margin:10px auto;text-align: center}
+  	.loading {background: url(__PUBLIC__/images/loading.gif) no-repeat top center;}
+</style>
+  <script type="text/javascript">
+    var imgdata=eval({$data});
+    var pos=0;
+    var sText=imgdata[0].add_intro;
+    var sImg=imgdata[0].source;
+    $(function(){
+      $("img").lazyload({effect : "fadeIn"});
+      $("#image-show").removeClass('loading');
+      $("#image-show img").attr("src",imgdata[0].source);
+      $(".imgtitle").text(imgdata[0].add_intro);
+    });
+    function prev(){
+      $("#image-show").addClass('loading');
+      $("#image-show img").fadeTo(0,0);
+      window.scrollTo(0,0);
+      pos=pos-1;
+      if(pos <= 0){
+      	pos=0;
+      }
+      var img=new Image();
+      img.src=imgdata[pos].source;
+      $(".imgtitle").text(imgdata[pos].add_intro);
+      img.onload=function(){
+         img.onload=null;
+         $("#image-show").removeClass('loading');
+       	 $("#image-show img").fadeTo(240,1);
+         $("#image-show img").attr("src",imgdata[pos].source);
+         bdShare.fn.conf.bdComment=bdShare.fn.conf.bdText=sText=imgdata[pos].add_intro;
+         bdShare.fn.conf.bdPic=sImg=imgdata[pos].source;
+      }
+      img.src=imgdata[pos].source;
+      if(img.complete){
+      	 img.onload=null;
+         $("#image-show").removeClass('loading');
+       	 $("#image-show img").fadeTo(240,1);
+         $("#image-show img").attr("src",imgdata[pos].source);
+         bdShare.fn.conf.bdComment=bdShare.fn.conf.bdText=sText=imgdata[pos].add_intro;
+         bdShare.fn.conf.bdPic=sImg=imgdata[pos].source;
+      }
+    }
+    function next(){
+      $("#image-show").addClass('loading');
+      $("#image-show img").fadeTo(0,0);
+      window.scrollTo(0,0);
+      pos=pos+1;
+      if(pos >= imgdata.length){
+      	pos=imgdata.length-1;
+      }
+       var img=new Image();
+       img.src=imgdata[pos].source;
+       $(".imgtitle").text(imgdata[pos].add_intro);
+       img.onload=function(){
+         img.onload=null;
+         $("#image-show").removeClass('loading');
+         $("#image-show img").fadeTo(240,1);
+         $("#image-show img").attr("src",imgdata[pos].source);
+         bdShare.fn.conf.bdComment=bdShare.fn.conf.bdText=sText=imgdata[pos].add_intro;
+         bdShare.fn.conf.bdPic=sImg=imgdata[pos].source;
+       }
+       img.src=imgdata[pos].source;
+       if(img.complete){
+      	 img.onload=null;
+         $("#image-show").removeClass('loading');
+       	 $("#image-show img").fadeTo(240,1);
+         $("#image-show img").attr("src",imgdata[pos].source);
+         bdShare.fn.conf.bdComment=bdShare.fn.conf.bdText=sText=imgdata[pos].add_intro;
+         bdShare.fn.conf.bdPic=sImg=imgdata[pos].source;
+       }
+    }
+  </script>
+<div class="container" style="height:20px"></div>
+  <div class="container">
+    <div class="adleft"></div>
+    <div class="imgtitle"></div>
+    <div class="loading" id="image-show">
+    	<img src="" />
+      <a href="javascript:;" onfocus="this.blur()" onclick="prev();return false;" class="prev"></a>
+      <a href="javascript:;" onfocus="this.blur()" onclick="next();return false;" class="next"></a>
+    </div>
+    <div class="adright"></div>
+  </div>
+  <p class="text-info" style="text-align:center">This is dragonsom.com</p>
+<!-- Baidu Button BEGIN -->
+<script type="text/javascript" id="bdshare_js" data="type=slide&amp;img=3&amp;pos=right&amp;uid=3072460" ></script>
+<script type="text/javascript" id="bdshell_js"></script>
+<a class="shareCount" style="display:none"></a> 
+<script type="text/javascript">
+  var bds_config = {
+          'bdDes':'www.dragonsom.com',
+          'bdText':sText,
+          'bdComment':sText,
+          'bdPic':sImg,
+          'searchPic':1,
+          'review':'normal'		//'请参考自定义分享回流签名'
+  }
+document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000);
+</script>
+<!-- Baidu Button END -->
+<include file="Public:footer" />

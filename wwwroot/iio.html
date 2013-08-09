@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title></title>
+		<style type="text/css">
+			body{background: url(blk.jpg)}
+		</style>
+		<script type="text/javascript" src="http://code.jquery.com/jquery.min.js"></script>
+		<script type="text/javascript" src="http://iioengine.com/js/iioEngine-1.2.2.js"></script>
+		<script type="text/javascript" src="http://iioengine.com/js/iioDebugger.js"></script>
+	
+	</head>
+	<body>
+		<script type="text/javascript">
+		var appmanager;
+			fly=function(io){
+				io.activateDebugger();
+				appmanager=io;
+			
+
+				createbird=function(x,y){
+					io.addToGroup('birds',new iio.Rect(x,y,69,32)
+										.createWithAnim(imgs)
+										.enableKinematics()
+										.setVel(1,1)
+										.setBound('top',0,function(obj){
+												obj.vel.y=iio.getRandomInt(1,10);
+												return true;
+											})
+										.setBound('right',io.canvas.width,function(obj){
+												obj.vel.x=-iio.getRandomInt(1,10);
+												return true;
+											})
+										.setBound('bottom',io.canvas.height,function(obj){
+												obj.vel.y=-iio.getRandomInt(1,10);
+												return true;
+											})
+										.setBound('left',0,function(obj){
+												obj.vel.x=iio.getRandomInt(1,10);
+												return true;
+											})
+								);
+				}
+				init=function(){
+					for(var i=50;i<=100;i+=50){
+						createbird(i*2,i*3);
+					};
+						io.setCollisionCallback('birds',function(birds1,birds2){
+					       var temp = birds1.vel;
+					       birds1.vel = birds2.vel;
+					       birds2.vel = temp;
+						});
+
+					}
+				var imgs = [];
+			  	imgs[0] = new Image();
+			  	imgs[0].src='http://iioengine.com/demo-apps/platformer/img/enemies/fly_normal.png';
+			  	imgs[1] = new Image();
+			  	imgs[1].src='http://iioengine.com/demo-apps/platformer/img/enemies/fly_fly.png';
+			  	imgs[0].onload=init;
+
+			  	window.addEventListener('keydown',function(event){
+    				createbird(io.canvas.width/2,io.canvas.height/2);
+				});
+
+			  	io.canvas.addEventListener('click', function(event){
+    				createbird(event.x,event.y);
+				});
+				
+
+				io.addObj(new iio.Text('叉啊，伦家想你呀!!', io.canvas.center)
+						.setFont('30px Consolas')
+		                .setTextAlign('center')
+		                .setFillStyle('black'),-1);
+
+			  	io.setFramerate(25,function(){
+				  var objs=this[1].getGroup('birds');
+				  for(var i in objs){
+				  	if(typeof objs[i] !== 'function'){
+				  		objs[i].nextAnimFrame();
+				  	}
+				  }
+				});
+			}
+			
+			 iio.start(fly);
+		</script>
+	</body>
+</html>

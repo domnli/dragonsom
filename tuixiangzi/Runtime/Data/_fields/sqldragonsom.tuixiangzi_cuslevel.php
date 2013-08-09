@@ -1,0 +1,1 @@
+<?php	return array ( 0 => 'lid', 1 => 'title', 2 => 'leveldata', '_autoinc' => true, '_pk' => 'lid', '_type' => array ( 'lid' => 'int(11)', 'title' => 'varchar(60)', 'leveldata' => 'text', ), );?>

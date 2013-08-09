@@ -1,0 +1,62 @@
+<include file="Public:header" />
+<style type="text/css">
+  .box{width: 195px;margin: 0 0 15px 17px;border: 1px solid #E0E0E0;background: #F0F0F0;padding: 11px;float: left;-webkit-transition: all .1s linear 0.1s;-moz-transition: all .1s linear 0.1s;}
+  .box:hover{ -webkit-transform:scale(1.07);-moz-transform:scale(1.07);-webkit-transition: all .1s linear 0.1s;-moz-transition: all .1s linear 0.1s;}
+  .box:active{ -webkit-transform:scale(1);-moz-transform:scale(1);-webkit-transition: all .1s linear 0.1s;-moz-transition: all .1s linear 0.1s;}
+  #loading{text-align: center;z-index: 100;position: fixed;left: 45%;bottom: 40px;width: 200px;padding: 10px;background: black;opacity: 0.8;color: white;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;}
+</style>
+  <script type="text/javascript">
+  var offset=0;
+  $(function(){
+    $("img").lazyload({effect : "fadeIn"});
+    $('.catalog').imagesLoaded(function(){
+            $(this).masonry({
+                    itemSelector: '.box', 
+                    isAnimated: true
+            });	
+    });
+    $(window).scroll(function scrollHandle(){
+        var c=document.documentElement.clientHeight || document.body.clientHeight, t=$(document).scrollTop();
+        if(t+c == document.height){
+          $('#loading').fadeIn();
+          $.ajax({
+            type:'post',
+            url:'{:U("Xemh/catload")}',
+            data:'offset='+offset,
+            dataType:'json',
+            success:function(ret){
+              if(0 == ret.status){
+              	return;
+              }
+              var json = ret.data;
+              offset = offset + json.length;
+              var module='<div class="box"> <a href="%link%"> <img src="%img%" /> </a> </div>';
+              var html='';
+              for(var i in json){
+              	html+=module.replace('%link%','/Xemh/details/gid/'+json[i].gid+'.html').replace('%img%',json[i].dimgurl);
+              }
+              $('.catalog').append($(html)).imagesLoaded(function(){
+              	$(this).masonry( 'reload' );
+                $('#loading').fadeOut();
+              });
+            }
+          });
+        }
+    });
+  });
+  </script>
+<div style="margin-top:20px">
+  <div class="catalog">
+    <volist name="clist" id="vo">
+        <div class="box">
+          <a href="{:U('/Xemh/details/gid/'.$vo['gid'])}">
+            <img src="{$vo.dimgurl}" />
+          </a>
+        </div>
+    </volist>
+    
+  </div>
+    <div id="loading" style="display:none"><img alt="Loading..." src="http://i.imgur.com/6RMhx.gif"><div><em>Loading the next set of posts...</em></div></div>
+  </div>
+  <p class="text-info" style="text-align:center">This is dragonsom.com</p>
+<include file="Public:footer" />

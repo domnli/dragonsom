@@ -1,0 +1,103 @@
+<include file="header" />
+	<script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.min.js'></script>
+	<script type="text/javascript">
+		var cjdata;
+		function cj(gid,dimgurl){
+			$('button').attr('disabled','disabled');
+			$.ajax({
+				type: 'post',
+				url: '{:U("Xemhcj/getcontentfromgid")}',
+				data:'gid='+gid+'&dimgurl='+dimgurl,
+				dataType:'json',
+				success:function(data){
+					console.log(data);
+					cjdata = data.picInfo;
+					batchgetcontent(gid,0);
+				},
+				error:function(a,b,c){
+					console.log('cj失败原因:'+b);
+				}
+			});
+		}
+		function batchgetcontent(gid,index){
+			if(index>=cjdata.length){
+				$('#btncj-'+gid).removeAttr('onclick').addClass('disabled');
+				$('button').removeAttr('disabled');
+				$('#btncj-'+gid).text('已采集');
+				$('#btncj-'+gid+',.disabled').attr('disabled','disabled');
+                                $('button[class!=disabled]').eq(0).click();
+				return;
+			}
+			$.ajax({
+				type:'post',
+				url:'{:U("Xemhcj/savecontentimg")}',
+				data:'amount='+cjdata.length+'&index='+index+'&gid='+gid+'&title='+cjdata[index].title+'&add_intro='+cjdata[index].add_intro+'&source='+cjdata[index].source+'&pic_id='+cjdata[index].pic_id,
+				success:function(data){
+					if(1 == data){
+						$('#plusnum-'+gid).text(parseInt($('#plusnum-'+gid).text())+1);
+						batchgetcontent(gid,index+1);	
+					}
+					
+				},
+				error:function(a,b,c){
+					console.log('batchgetcontent失败原因：'+b);
+					batchgetcontent(gid,index+1);
+				}
+			});
+		}
+		function offsetreload(){
+			var offset=parseInt($('.txt-offset').val());
+			if(isNaN(offset)){
+				offset=0;
+			}
+			window.location.href='{:U("Xemhcj/index")}?offset='+offset*30;
+		}
+	</script>
+	<div style="width:100%; height:35px;color:#000;margin:0px 0px 10px;line-height:35px">
+	  <div style="float:left;"><a href="{:U('Index/stat')}" target="main"><b>控制面板首页</b></a>&nbsp;&raquo;&nbsp;邪恶漫画采集</div>
+	  <div style="float:left;margin-left:20px"><font size="3">offset*30:&nbsp;&nbsp;</font><input style="width:50px;height:25px" type="text" class="txt-offset" /><button style="height:40px" onclick="offsetreload();">刷新</button>(设置的越大获取的内容越早)</div>
+	</div>
+	<table cellspacing="1" cellpadding="4" width="100%" align="center" style="border: 0 none !important; border-collapse: separate !important;empty-cells: show;margin-bottom: 0px;">
+		<tr class="header" align="center">
+			<td  width="10%" class="center">目录标题</td>
+			<td  width="20%" class="center">内容数量</td>
+			<td  width="50%" class="center">目录封面图片地址</td>
+			<td  width="20%" class="center">采集目录下的内容</td>
+		</tr>
+	</table>
+	<ul id="list">
+		<if condition="$catalog neq NULL">
+			<volist name="catalog" id="vo">
+				<li style="list-style:none;">
+					<table  id="table1" cellspacing="1" cellpadding="4" width="100%" align="center" style="border: 0 none !important; border-collapse: separate !important;empty-cells: show;margin-bottom: 0px;"> 
+						<tr align="center" class="smalltxt">
+							<td width="10%" class="altbg1 center">{$vo.title}</td>
+							<if condition="0 == $vo['isgetcontent']">
+								<td width="20%" class="altbg2 center"><span id="plusnum-{$vo.gid}">0</span>/{$vo.amount}</td>
+							<else />
+								<td width="20%" class="altbg2 center">{$vo.amount}/{$vo.amount}</td>
+							</if>
+							<td width="50%" class="altbg1 center">{$vo.dimgurl}</td>
+							<td width="20%" class="altbg1 center">
+							<if condition="0 == $vo['isgetcontent']">
+								<button id="btncj-{$vo.gid}" onclick="cj({$vo.gid},'{$vo.dimgurl}')">采集</button>
+							<else />
+								已采集
+							</if>
+							</td>
+						</tr>
+					</table>
+				</li>
+			</volist>
+		<else />
+			<li>
+				<table  id="table1" cellspacing="1" cellpadding="4" width="100%" align="center" style="border: 0 none !important; border-collapse: separate !important;empty-cells: show;margin-bottom: 0px;"> 
+					<tr align="center" class="smalltxt">
+						<td class="altbg1" style="text-align:center;font-weight:bold;color:#E01558;padding:10px 0px;">多玩邪恶漫画频道暂时没有新内容</td>
+					</tr>
+				</table>
+			</li>
+		</if>	
+	</ul>
+<br/>
+<include file="footer" />
